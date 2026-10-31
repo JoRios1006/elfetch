@@ -1,13 +1,14 @@
 
 #include <cstdio>
+#include <filesystem>
 #include <iostream>
-#include <string_view>
 using namespace std;
-typedef string_view stringv;
+namespace fs = filesystem;
 int main(int argc, char *argv[]) {
    if (argc < 2) return 1;
-   const stringv path = argv[1];
-   cout << path << '\n';   
-      
+   const fs::path path = argv[1];
+   if (!(fs::exists(path) && fs::is_regular_file(path))) return 1;
+   cout << path << '\n';
+
    return 0;
 }
