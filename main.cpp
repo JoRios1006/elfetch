@@ -2,26 +2,39 @@
 #include <filesystem>
 #include <iostream>
 #include <array>
-
+#include <fcntl.h>
+#include <unistd.h>
+#include <array>
+#include <iostream>
 using namespace std;
 namespace fs = filesystem;
 typedef array<char, 0x40> Header;
-bool is_file(fs::path p){return !(fs::exists(p) && fs::is_regular_file(p));}
 
-Header read_header(const filesystem::path& ruta) {
-    FILE* archivo = fopen(ruta.string().c_str(), "rb");
+#include <cstdio>
+#include <array>
+
+Header read_elf_header(const char* ruta_archivo) {
+    FILE* archivo = fopen(ruta_archivo, "rb");
     if (!archivo) return {};
-    array<char, 0x40> buffer{};
+
+    // Forzar al flujo C a no almacenar páginas de 4096 bytes en memoria
+    setvbuf(archivo, nullptr, _IONBF, 0);
+
+    Header buffer{};
     fread(buffer.data(), 1, buffer.size(), archivo);
     fclose(archivo);
+
     return buffer;
 }
+
+bool is_file(fs::path p){return !(fs::exists(p) && fs::is_regular_file(p));}
+
 int main(int argc, char *argv[]) {
    if (argc < 2) return 1;
    const fs::path path = argv[1];
    if (is_file(path)) return 1;
    cout << path << '\n';
-   Header header = read_header(path);   
+   Header header = read_elf_header(path.c_str());   
    cout << header.size() << '\n';
 
    return 0;
