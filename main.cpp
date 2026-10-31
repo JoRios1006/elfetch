@@ -27,12 +27,10 @@ Header read_elf_header(const char* ruta_archivo) {
     return buffer;
 }
 
-bool is_file(fs::path p){return !(fs::exists(p) && fs::is_regular_file(p));}
 
 int main(int argc, char *argv[]) {
    if (argc < 2) return 1;
-   const fs::path path = argv[1];
-   if (is_file(path)) return 1;
+   const string path = argv[1];
    cout << path << '\n';
    Header header = read_elf_header(path.c_str());   
    cout << header.size() << '\n';
