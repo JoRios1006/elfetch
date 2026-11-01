@@ -56,10 +56,6 @@ int main(int argc, char *argv[]) {
    ElfHeader elf_header;
    memcpy(&elf_header, header.data(), sizeof(ElfHeader));
    cout << ((elf_header.magic[0] == 0x7F) ? "ELF" : "NOT ELF") << '\n';
+   cout << elf_header.e_machine << '\n';
    return 0;
 }
-
-
-/*
-
-*/
