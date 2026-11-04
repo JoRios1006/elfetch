@@ -61,11 +61,17 @@ enum class E_OSABI : Elf64_Byte {
   NSK     = 14,
 };
 
+enum class E_DATA : Elf64_Byte {
+ NONE   = 0,
+ TWOLSB = 1,
+ TWOMSB = 2,  
+};
+
 #pragma pack(push, 1)
 struct ElfHeader {
   Elf64_Byte      magic[4];       // Offsets 0x00-0x03 (4 bytes) // NOLINT(modernize-avoid-c-arrays)
   Elf64_Byte      ei_class;       // Offset  0x04      (1 byte)
-  Elf64_Byte      ei_data;        // Offset  0x05      (1 byte)
+  E_DATA          ei_data;        // Offset  0x05      (1 byte)
   Elf64_Byte      ei_version;     // Offset  0x06      (1 byte)
   E_OSABI         ei_osabi;       // Offset  0x07      (1 byte)
   Elf64_Byte      ei_abiversion;  // Offset  0x08      (1 byte)
@@ -128,7 +134,16 @@ inline auto checkOSABI(E_OSABI OSABI) -> string {
   CASE(E_OSABI::OPENVMS, "Open VMS")
   CASE(E_OSABI::NSK, "Hewlett-Packard Non-Stop Kernel")
   default: return "Architecture-specific value range";
-  }  
+  }
+}
+
+inline auto checkTwosComplement(E_DATA DATA) -> string {
+  switch (DATA) {
+  CASE(E_DATA::NONE, "Invalid data encoding")  
+  CASE(E_DATA::TWOLSB, "little endian")
+  CASE(E_DATA::TWOMSB, "big endian")
+  default: return "Invalid format";  
+  }
 }
 
 auto main(int argc, char *argv[]) -> int{
@@ -141,10 +156,11 @@ auto main(int argc, char *argv[]) -> int{
   out.append(header.max_size()); LN
   ElfHeader elf_header;
   memcpy(&elf_header, header.data(), sizeof(ElfHeader));
-  out.append((elf_header.magic[0] == 0x7F) ? "ELF" : "NOT ELF"); LN
+  out.append((elf_header.magic[0] == 0x7F && elf_header.magic[1] == 'E' && elf_header.magic[2] == 'L' && elf_header.magic[3] == 'F') ? "ELF" : "NOT ELF"); LN
   out.append(checkArch(elf_header.e_machine)); LN
   out.append(checkType(elf_header.e_type)); LN
   out.append(checkOSABI(elf_header.ei_osabi)); LN
+  out.append(checkTwosComplement(elf_header.ei_data)); LN
   out.flush();
   return 0;
 }
