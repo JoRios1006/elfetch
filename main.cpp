@@ -19,7 +19,6 @@ auto read_elf_header(const char* ruta_archivo) -> Header{
     fclose(archivo);
     return buffer;
 }
-#define EI_NIDENT 16
 using Elf64_Half = uint16_t;
 using Elf64_Word = uint32_t;
 using Elf64_Addr = uint64_t;
