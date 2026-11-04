@@ -9,8 +9,8 @@
 #define LN out.append("\n");
 
 using namespace std;
-typedef array<char, 0x40> Header;
-Header read_elf_header(const char* ruta_archivo) {
+using Header = array<char, 64>;
+auto read_elf_header(const char* ruta_archivo) -> Header{
     FILE* archivo = fopen(ruta_archivo, "rb");
     if (!archivo) return {};
     setvbuf(archivo, nullptr, _IONBF, 0);
@@ -20,11 +20,11 @@ Header read_elf_header(const char* ruta_archivo) {
     return buffer;
 }
 #define EI_NIDENT 16
-typedef uint16_t Elf64_Half;
-typedef uint32_t Elf64_Word;
-typedef uint64_t Elf64_Addr;
-typedef uint64_t Elf64_Off;
-enum ARCH : Elf64_Half {
+using Elf64_Half = uint16_t;
+using Elf64_Word = uint32_t;
+using Elf64_Addr = uint64_t;
+using Elf64_Off = uint64_t;
+enum ARCH : Elf64_Half { //NOLINT(performance-enum-size)
   I8038632 = 0x03,
   AMD866 = 0x3E,
   ARM32 = 0x28,
@@ -36,13 +36,13 @@ enum ARCH : Elf64_Half {
 };
 #pragma pack(push, 1)
 struct ElfHeader {
-        uint8_t  magic[4];       // Offsets 0x00-0x03 (4 bytes)
+        uint8_t  magic[4];       // Offsets 0x00-0x03 (4 bytes) // NOLINT(modernize-avoid-c-arrays)
         uint8_t  ei_class;       // Offset  0x04      (1 byte)
         uint8_t  ei_data;        // Offset  0x05      (1 byte)
         uint8_t  ei_version;     // Offset  0x06      (1 byte)
         uint8_t  ei_osabi;       // Offset  0x07      (1 byte)
         uint8_t  ei_abiversion;  // Offset  0x08      (1 byte)
-        uint8_t  ei_pad[7];      // Offsets 0x09-0x0F (7 bytes)
+        uint8_t  ei_pad[7];      // Offsets 0x09-0x0F (7 bytes) // NOLINT(modernize-avoid-c-arrays)
         Elf64_Half      e_type;
         ARCH      e_machine;
         Elf64_Word      e_version;
@@ -60,7 +60,7 @@ struct ElfHeader {
 #pragma pack(pop)
 
 #define CASE(x, y) case x: return y;
-inline string checkArch(ARCH EMACHINE) {
+inline auto checkArch(ARCH EMACHINE) -> string {
   switch (EMACHINE) {
   CASE(I8038632, "Intel 80386 (x86 / 32-bit)")
   CASE(AMD866, "AMD x86-64 (AMD64 / 64-bit)")
@@ -75,7 +75,7 @@ inline string checkArch(ARCH EMACHINE) {
 }
 }
 
-int main(int argc, char *argv[]) {
+auto main(int argc, char *argv[]) -> int{
    IOBuffer<4096> out;
    if (argc < 2) return 1;
    const string path = argv[1];
