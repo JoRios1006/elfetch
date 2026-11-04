@@ -59,7 +59,7 @@ struct ElfHeader {
 };
 #pragma pack(pop)
 
-#define simple_case(x, y) do{case(x) return y; break;}while(0);
+#define simple_case(x, y) do{case(x): return y; break;}while(0);
 inline string checkArch(ARCH EMACHINE) {
   switch (EMACHINE) {
   case (I8038632):
