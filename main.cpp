@@ -144,6 +144,7 @@ auto main(int argc, char *argv[]) -> int{
   out.append((elf_header.magic[0] == 0x7F) ? "ELF" : "NOT ELF"); LN
   out.append(checkArch(elf_header.e_machine)); LN
   out.append(checkType(elf_header.e_type)); LN
+  out.append(checkOSABI(elf_header.ei_osabi)); LN
   out.flush();
   return 0;
 }
