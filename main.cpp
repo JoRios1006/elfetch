@@ -33,6 +33,14 @@ enum ARCH : Elf64_Half { //NOLINT(performance-enum-size)
   PowerPC = 0x14,
   PowerPC64 = 0x15,
 };
+
+enum class E_TYPE : Elf64_Half { //NOLINT(performance-enum-size)
+    None = 0,
+    Relocatable = 1,
+    Executable = 2,
+    SharedObject = 3,
+    Core = 4
+};
 #pragma pack(push, 1)
 struct ElfHeader {
         uint8_t  magic[4];       // Offsets 0x00-0x03 (4 bytes) // NOLINT(modernize-avoid-c-arrays)
@@ -42,8 +50,8 @@ struct ElfHeader {
         uint8_t  ei_osabi;       // Offset  0x07      (1 byte)
         uint8_t  ei_abiversion;  // Offset  0x08      (1 byte)
         uint8_t  ei_pad[7];      // Offsets 0x09-0x0F (7 bytes) // NOLINT(modernize-avoid-c-arrays)
-        Elf64_Half      e_type;
-        ARCH      e_machine;
+        E_TYPE          e_type;
+        ARCH            e_machine;
         Elf64_Word      e_version;
         Elf64_Addr      e_entry;
         Elf64_Off       e_phoff;
@@ -58,20 +66,33 @@ struct ElfHeader {
 };
 #pragma pack(pop)
 
+
+
 #define CASE(x, y) case x: return y;
 inline auto checkArch(ARCH EMACHINE) -> string {
   switch (EMACHINE) {
-  CASE(I8038632, "Intel 80386 (x86 / 32-bit)")
-  CASE(AMD866, "AMD x86-64 (AMD64 / 64-bit)")
-  CASE(ARM32, "ARM (32-bit)")
-  CASE(ARM64, "ARM 64-bit (AArch64)")
-  CASE(RISCV, "RISC-V")
-  CASE(MIPS, "MIPS")
-  CASE(PowerPC, "PowerPC")    
-  CASE(PowerPC64, "PowerPC 64-bit")
+  CASE(ARCH::I8038632, "Intel 80386 (x86 / 32-bit)")
+  CASE(ARCH::AMD866, "AMD x86-64 (AMD64 / 64-bit)")
+  CASE(ARCH::ARM32, "ARM (32-bit)")
+  CASE(ARCH::ARM64, "ARM 64-bit (AArch64)")
+  CASE(ARCH::RISCV, "RISC-V")
+  CASE(ARCH::MIPS, "MIPS")
+  CASE(ARCH::PowerPC, "PowerPC")    
+  CASE(ARCH::PowerPC64, "PowerPC 64-bit")
   default:
   return "Reserved for future use";    
 }
+}
+
+inline auto checkType(E_TYPE TYPE) -> string {
+    switch (TYPE) {
+        CASE(E_TYPE::None, "NONE (Desconocido)")
+        CASE(E_TYPE::Relocatable, "REL (Archivo Relocatable)")
+        CASE(E_TYPE::Executable, "EXEC (Ejecutable)")
+        CASE(E_TYPE::SharedObject, "DYN (Librería Compartida / PIE)")
+        CASE(E_TYPE::Core, "CORE (Core Dump)")
+        default: return "Desconocido / Específico del procesador";
+    }
 }
 
 auto main(int argc, char *argv[]) -> int{
@@ -86,6 +107,7 @@ auto main(int argc, char *argv[]) -> int{
    memcpy(&elf_header, header.data(), sizeof(ElfHeader));
    out.append((elf_header.magic[0] == 0x7F) ? "ELF" : "NOT ELF"); LN
    out.append(checkArch(elf_header.e_machine)); LN
+   out.append(checkType(elf_header.e_type)); LN
    out.flush();
    return 0;
 }
