@@ -145,6 +145,14 @@ inline auto checkTwosComplement(E_DATA DATA) -> string {
   default: return "Invalid format";  
   }
 }
+const string ascii_art[] = {
+"\\     /\\     /",
+" \\. .'--`. .' ",
+"  \\\\|X X |//  ",
+"   \\|┌──┐|/   ",
+"    |└──┘|    ",
+"     ----     ",};
+
 
 auto main(int argc, char *argv[]) -> int{
   IOBuffer<4096> out;
@@ -156,11 +164,32 @@ auto main(int argc, char *argv[]) -> int{
   out.append(header.max_size()); LN
   ElfHeader elf_header;
   memcpy(&elf_header, header.data(), sizeof(ElfHeader));
-  out.append((elf_header.magic[0] == 0x7F && elf_header.magic[1] == 'E' && elf_header.magic[2] == 'L' && elf_header.magic[3] == 'F') ? "ELF" : "NOT ELF"); LN
-  out.append(checkArch(elf_header.e_machine)); LN
-  out.append(checkType(elf_header.e_type)); LN
-  out.append(checkOSABI(elf_header.ei_osabi)); LN
-  out.append(checkTwosComplement(elf_header.ei_data)); LN
+  bool is_elf = (elf_header.magic[0] == 0x7F && 
+                 elf_header.magic[1] == 'E' && 
+                 elf_header.magic[2] == 'L' && 
+                 elf_header.magic[3] == 'F');
+
+  if (!is_elf) {
+    out.append("Error: El archivo no es un binario ELF válido.\n");
+    out.flush();
+    return 1;
+  }
+  string info_lines[] = {
+    "Target:  " + path,
+    "Endian:  " + checkTwosComplement(elf_header.ei_data),
+    "Arch:    " + checkArch(elf_header.e_machine),
+    "Type:    " + checkType(elf_header.e_type),
+    "OS/ABI:  " + checkOSABI(elf_header.ei_osabi),
+    "Format:  ELF64 Header OK"
+  };
+
+  constexpr int total_lines = 6;
+  for (int i = 0; i < total_lines; ++i) {
+    out.append(ascii_art[i]);
+    out.append("   "); // Espacio de separación entre columnas
+    out.append(info_lines[i]);
+    out.append("\n");
+  }
   out.flush();
   return 0;
 }
