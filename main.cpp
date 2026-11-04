@@ -59,29 +59,17 @@ struct ElfHeader {
 };
 #pragma pack(pop)
 
-#define simple_case(x, y) do{case(x): return y; break;}while(0);
+#define CASE(x, y) do{case(x): return y; break;}while(0);
 inline string checkArch(ARCH EMACHINE) {
   switch (EMACHINE) {
-  case (I8038632):
-  return "Intel 80386 (x86 / 32-bit)";
-  break;
-  simple_case(AMD866, "AMD x86-64 (AMD64 / 64-bit)")
-  case (ARM32):
-  return "ARM (32-bit)";    
-  break;
-  case (ARM64):
-  return "ARM 64-bit (AArch64)";    
-  break;
-  case (RISCV):
-  return "RISC-V";    
-  break;
-  case (MIPS):
-  return "MIPS";    
-  break;
-  simple_case(PowerPC, "PowerPC")    
-  case (PowerPC64):
-    return "PowerPC 64-bit";
-  break;
+  CASE(I8038632, "Intel 80386 (x86 / 32-bit)")
+  CASE(AMD866, "AMD x86-64 (AMD64 / 64-bit)")
+  CASE(ARM32, "ARM (32-bit)")
+  CASE(ARM64, "ARM 64-bit (AArch64)")
+  CASE(RISCV, "RISC-V")
+  CASE(MIPS, "MIPS")
+  CASE(PowerPC, "PowerPC")    
+  CASE(PowerPC64, "PowerPC 64-bit")
   default:
   return "Reserved for future use";    
 }
