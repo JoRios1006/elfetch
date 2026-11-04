@@ -5,6 +5,8 @@
 #include <iostream>
 #include <fcntl.h>
 #include <unistd.h>
+#include <iostream>
+#include "io_buffer.hpp"
 
 using namespace std;
 typedef array<char, 0x40> Header;
@@ -48,14 +50,17 @@ struct ElfHeader {
 #pragma pack(pop)
 
 int main(int argc, char *argv[]) {
+   IOBuffer<4096> out;
    if (argc < 2) return 1;
    const string path = argv[1];
-   cout << path << '\n';
+   out.append(path);
    Header header = read_elf_header(path.c_str());   
    cout << header.size() << '\n';
+   out.append(header.max_size());
    ElfHeader elf_header;
    memcpy(&elf_header, header.data(), sizeof(ElfHeader));
-   cout << ((elf_header.magic[0] == 0x7F) ? "ELF" : "NOT ELF") << '\n';
-   cout << elf_header.e_machine << '\n';
+   out.append((elf_header.magic[0] == 0x7F) ? "ELF" : "NOT ELF");
+   out.append(elf_header.e_machine);
+   out.flush();
    return 0;
 }
