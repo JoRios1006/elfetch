@@ -145,23 +145,20 @@ inline auto checkTwosComplement(E_DATA DATA) -> string {
   default: return "Invalid format";  
   }
 }
-const string ascii_art[] = {
-"\\     /\\     /",
-" \\. .'--`. .' ",
-"  \\\\|X X |//  ",
-"   \\|┌──┐|/   ",
-"    |└──┘|    ",
-"     ----     ",};
+const string ascii_art[] = {// NOLINT(modernize-avoid-c-arrays)
+  "\\     /\\     /",
+  " \\. .'--`. .' ",
+  "  \\\\|X X |//  ",
+  "   \\|┌──┐|/   ",
+  "    |└──┘|    ",
+  "     ----     ",};
 
 
 auto main(int argc, char *argv[]) -> int{
   IOBuffer<4096> out;
   if (argc < 2) return 1;
   const string path = argv[1];
-  out.append(path); LN
   Header header = read_elf_header(path.c_str());   
-  out.append(header.size()); LN
-  out.append(header.max_size()); LN
   ElfHeader elf_header;
   memcpy(&elf_header, header.data(), sizeof(ElfHeader));
   bool is_elf = (elf_header.magic[0] == 0x7F && 
@@ -174,7 +171,7 @@ auto main(int argc, char *argv[]) -> int{
     out.flush();
     return 1;
   }
-  string info_lines[] = {
+  string info_lines[] = { // NOLINT(modernize-avoid-c-arrays)
     "Target:  " + path,
     "Endian:  " + checkTwosComplement(elf_header.ei_data),
     "Arch:    " + checkArch(elf_header.e_machine),
