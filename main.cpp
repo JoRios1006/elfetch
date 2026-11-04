@@ -4,6 +4,7 @@
 #include <cstring>
 #include <iostream>
 #include <fcntl.h>
+#include <sys/types.h>
 #include <unistd.h>
 #include "io_buffer.hpp"
 #define LN out.append("\n");
@@ -20,6 +21,7 @@ auto read_elf_header(const char* ruta_archivo) -> Header{
   return buffer;
 }
 
+using Elf64_Byte = uint8_t;
 using Elf64_Half = uint16_t;
 using Elf64_Word = uint32_t;
 using Elf64_Addr = uint64_t;
@@ -43,15 +45,31 @@ enum class E_TYPE : Elf64_Half { //NOLINT(performance-enum-size)
   Core = 4
 };
 
+enum class E_OSABI : Elf64_Byte {
+  NONE    = 0,
+  HPUX    = 1,
+  NETBSD  = 2,
+  LINUX   = 3,
+  SOLARIS = 6,
+  AIX     = 7,
+  IRIX    = 8,
+  FREEBSD = 9,
+  TRU64   = 10,
+  MODESTO = 11,
+  OPENBSD = 12,
+  OPENVMS = 13,
+  NSK     = 14,
+};
+
 #pragma pack(push, 1)
 struct ElfHeader {
-  uint8_t  magic[4];       // Offsets 0x00-0x03 (4 bytes) // NOLINT(modernize-avoid-c-arrays)
-  uint8_t  ei_class;       // Offset  0x04      (1 byte)
-  uint8_t  ei_data;        // Offset  0x05      (1 byte)
-  uint8_t  ei_version;     // Offset  0x06      (1 byte)
-  uint8_t  ei_osabi;       // Offset  0x07      (1 byte)
-  uint8_t  ei_abiversion;  // Offset  0x08      (1 byte)
-  uint8_t  ei_pad[7];      // Offsets 0x09-0x0F (7 bytes) // NOLINT(modernize-avoid-c-arrays)
+  Elf64_Byte      magic[4];       // Offsets 0x00-0x03 (4 bytes) // NOLINT(modernize-avoid-c-arrays)
+  Elf64_Byte      ei_class;       // Offset  0x04      (1 byte)
+  Elf64_Byte      ei_data;        // Offset  0x05      (1 byte)
+  Elf64_Byte      ei_version;     // Offset  0x06      (1 byte)
+  E_OSABI         ei_osabi;       // Offset  0x07      (1 byte)
+  Elf64_Byte      ei_abiversion;  // Offset  0x08      (1 byte)
+  Elf64_Byte      ei_pad[7];      // Offsets 0x09-0x0F (7 bytes) // NOLINT(modernize-avoid-c-arrays)
   E_TYPE          e_type;
   ARCH            e_machine;
   Elf64_Word      e_version;
