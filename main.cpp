@@ -5,7 +5,6 @@
 #include <iostream>
 #include <fcntl.h>
 #include <unistd.h>
-#include <iostream>
 #include "io_buffer.hpp"
 
 using namespace std;
