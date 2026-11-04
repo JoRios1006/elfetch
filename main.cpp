@@ -48,19 +48,20 @@ struct ElfHeader {
         Elf64_Half      e_shtrndx;
 };
 #pragma pack(pop)
+#define LN out.append("\n");
 
 int main(int argc, char *argv[]) {
    IOBuffer<4096> out;
    if (argc < 2) return 1;
    const string path = argv[1];
-   out.append(path);
+   out.append(path); LN
    Header header = read_elf_header(path.c_str());   
-   out.append(header.size());
-   out.append(header.max_size());
+   out.append(header.size()); LN
+   out.append(header.max_size()); LN
    ElfHeader elf_header;
    memcpy(&elf_header, header.data(), sizeof(ElfHeader));
-   out.append((elf_header.magic[0] == 0x7F) ? "ELF" : "NOT ELF");
-   out.append(elf_header.e_machine);
+   out.append((elf_header.magic[0] == 0x7F) ? "ELF" : "NOT ELF"); LN
+   out.append(elf_header.e_machine); LN
    out.flush();
    return 0;
 }
