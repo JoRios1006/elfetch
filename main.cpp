@@ -55,7 +55,7 @@ int main(int argc, char *argv[]) {
    const string path = argv[1];
    out.append(path);
    Header header = read_elf_header(path.c_str());   
-   cout << header.size() << '\n';
+   out.append(header.size());
    out.append(header.max_size());
    ElfHeader elf_header;
    memcpy(&elf_header, header.data(), sizeof(ElfHeader));
