@@ -59,7 +59,7 @@ struct ElfHeader {
 };
 #pragma pack(pop)
 
-#define CASE(x, y) do{case(x): return y; break;}while(0);
+#define CASE(x, y) case x: return y;
 inline string checkArch(ARCH EMACHINE) {
   switch (EMACHINE) {
   CASE(I8038632, "Intel 80386 (x86 / 32-bit)")
