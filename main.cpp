@@ -112,6 +112,25 @@ inline auto checkType(E_TYPE TYPE) -> string {
   }
 }
 
+inline auto checkOSABI(E_OSABI OSABI) -> string {
+  switch (OSABI) {
+  CASE(E_OSABI::NONE, "No extensions or unspecified")
+  CASE(E_OSABI::HPUX, "Hewlett-Packard HP-UX")
+  CASE(E_OSABI::NETBSD, "NetBSD")
+  CASE(E_OSABI::LINUX, "Linux")
+  CASE(E_OSABI::SOLARIS, "Sun Solaris")
+  CASE(E_OSABI::AIX, "AIX")
+  CASE(E_OSABI::IRIX, "IRIX")
+  CASE(E_OSABI::FREEBSD, "FreeBSD")  
+  CASE(E_OSABI::TRU64, "Compaq TRU64 UNIX")
+  CASE(E_OSABI::MODESTO, "Novell Modesto")
+  CASE(E_OSABI::OPENBSD, "Open BSD")
+  CASE(E_OSABI::OPENVMS, "Open VMS")
+  CASE(E_OSABI::NSK, "Hewlett-Packard Non-Stop Kernel")
+  default: return "Architecture-specific value range";
+  }  
+}
+
 auto main(int argc, char *argv[]) -> int{
   IOBuffer<4096> out;
   if (argc < 2) return 1;
