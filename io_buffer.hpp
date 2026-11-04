@@ -6,6 +6,7 @@
 #include <cstdarg>
 #include <charconv> // Para std::to_chars (C++17)
 #include <type_traits>
+#include <unistd.h> // Para la syscall write
 
 template <size_t Capacity>
 class IOBuffer {
@@ -75,10 +76,10 @@ public:
     }
 
     // Escritura masiva final
-    void flush(FILE* stream = stdout) {
+    void flush(int fd = STDOUT_FILENO) {
         if (offset > 0) {
-            std::fwrite(buffer, 1, offset, stream);
-            std::fflush(stream);
+            // Llamada al sistema pura y dura, sin que glibc meta las manos
+            ::write(fd, buffer, offset);
             offset = 0;
         }
     }
