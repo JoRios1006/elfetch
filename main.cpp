@@ -6,6 +6,7 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include "io_buffer.hpp"
+#define LN out.append("\n");
 
 using namespace std;
 typedef array<char, 0x40> Header;
@@ -23,6 +24,16 @@ typedef uint16_t Elf64_Half;
 typedef uint32_t Elf64_Word;
 typedef uint64_t Elf64_Addr;
 typedef uint64_t Elf64_Off;
+enum ARCH : Elf64_Half {
+  I8038632 = 0x03,
+  AMD866 = 0x3E,
+  ARM32 = 0x28,
+  ARM64 = 0xB7,
+  RISCV = 0xF3,
+  MIPS = 0x08,
+  PowerPC = 0x14,
+  PowerPC64 = 0x15,
+};
 #pragma pack(push, 1)
 struct ElfHeader {
         uint8_t  magic[4];       // Offsets 0x00-0x03 (4 bytes)
@@ -33,7 +44,7 @@ struct ElfHeader {
         uint8_t  ei_abiversion;  // Offset  0x08      (1 byte)
         uint8_t  ei_pad[7];      // Offsets 0x09-0x0F (7 bytes)
         Elf64_Half      e_type;
-        Elf64_Half      e_machine;
+        ARCH      e_machine;
         Elf64_Word      e_version;
         Elf64_Addr      e_entry;
         Elf64_Off       e_phoff;
@@ -47,7 +58,38 @@ struct ElfHeader {
         Elf64_Half      e_shtrndx;
 };
 #pragma pack(pop)
-#define LN out.append("\n");
+
+
+inline string checkArch(ARCH EMACHINE) {
+  switch (EMACHINE) {
+  case (I8038632):
+  return "Intel 80386 (x86 / 32-bit)";
+  break;
+  case (AMD866):
+  return "AMD x86-64 (AMD64 / 64-bit)";    
+  break;
+  case (ARM32):
+  return "ARM (32-bit)";    
+  break;
+  case (ARM64):
+  return "ARM 64-bit (AArch64)";    
+  break;
+  case (RISCV):
+  return "RISC-V";    
+  break;
+  case (MIPS):
+  return "MIPS";    
+  break;
+  case (PowerPC):
+  return "PowerPC";    
+  break;
+  case (PowerPC64):
+  return "PowerPC 64-bit";    
+  break;
+  default:
+  return "Reserved for future use";    
+}
+}
 
 int main(int argc, char *argv[]) {
    IOBuffer<4096> out;
@@ -60,7 +102,7 @@ int main(int argc, char *argv[]) {
    ElfHeader elf_header;
    memcpy(&elf_header, header.data(), sizeof(ElfHeader));
    out.append((elf_header.magic[0] == 0x7F) ? "ELF" : "NOT ELF"); LN
-   out.append(elf_header.e_machine); LN
+   out.append(checkArch(elf_header.e_machine)); LN
    out.flush();
    return 0;
 }
