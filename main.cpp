@@ -19,6 +19,7 @@ auto read_elf_header(const char* ruta_archivo) -> Header{
   fclose(archivo);
   return buffer;
 }
+
 using Elf64_Half = uint16_t;
 using Elf64_Word = uint32_t;
 using Elf64_Addr = uint64_t;
@@ -41,6 +42,7 @@ enum class E_TYPE : Elf64_Half { //NOLINT(performance-enum-size)
   SharedObject = 3,
   Core = 4
 };
+
 #pragma pack(push, 1)
 struct ElfHeader {
   uint8_t  magic[4];       // Offsets 0x00-0x03 (4 bytes) // NOLINT(modernize-avoid-c-arrays)
@@ -65,8 +67,6 @@ struct ElfHeader {
   Elf64_Half      e_shtrndx;
 };
 #pragma pack(pop)
-
-
 
 #define CASE(x, y) case x: return y;
 inline auto checkArch(ARCH EMACHINE) -> string {
