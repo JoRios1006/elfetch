@@ -30,24 +30,18 @@ g++ -std=c++17 -O2 -Wall -Wextra main.cpp -o elfetch
 Run it with the path to an ELF file:
 
 ```sh
-./elfetch /bin/ls
+./elfetch ./elfetch
 ```
 
 Example output:
 
 ```text
-\     /\     /
- \. .'--`. .' 
-  \\|X X |//
-   \|┌──┐|/
-    |└──┘|
-     ----
-Target:  /bin/ls
-Endian:  little endian
-Arch:    AMD x86-64 architecture
-Type:    EXEC (Ejecutable)
-OS/ABI:  Linux
-Format:  ELF64 Header OK
+\     /\     /   Target:  ./elfetch
+ \. .'--`. .'    Endian:  little endian
+  \\|X X |//     Arch:    AMD x86-64 architecture
+   \|┌──┐|/      Type:    EXEC (Ejecutable)
+    |└──┘|       OS/ABI:  Linux
+     ----        Format:  ELF64 Header OK
 ```
 
 If the file is not a valid ELF binary, the program prints an error and exits with status 1.
