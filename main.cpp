@@ -2,7 +2,6 @@
 #include <cstdint>
 #include <cstdio>
 #include <cstring>
-#include <functional>
 #include <iostream>
 #include <fcntl.h>
 #include <sys/types.h>
