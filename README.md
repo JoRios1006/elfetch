@@ -1,17 +1,25 @@
 # elfetch
 
-`elfetch` is a small command-line utility that displays a quick summary of an ELF file's header—like `neofetch`, but for ELF files.
+`elfetch` is a lightweight command-line utility inspired by `neofetch`, but focused on ELF binaries.
 
-It checks the ELF magic bytes and prints the target path, byte order, architecture, file type, and OS/ABI alongside a small piece of ASCII art.
+It reads the ELF header of a target file and prints a compact, human-readable summary including the path, byte order, architecture, file type, ABI, and a small ASCII preview.
+
+## Features
+
+- Validates the ELF magic bytes before parsing
+- Reads key fields from an ELF64 header
+- Prints a neofetch-like summary with ASCII art
+- Reports architecture and OS/ABI labels when recognized
+- Exits with a non-zero status for missing arguments or invalid ELF input
 
 ## Requirements
 
-- A C++17-compatible compiler (for example, `g++`)
-- Linux or another environment that provides `unistd.h` and `write(2)`
+- A C++17-compatible compiler, such as `g++`
+- A Unix-like environment providing `unistd.h` and `write(2)`
 
 ## Build
 
-From the repository directory, compile the program with:
+From the project root, compile it with:
 
 ```sh
 g++ -std=c++17 -O2 -Wall -Wextra main.cpp -o elfetch
@@ -19,30 +27,38 @@ g++ -std=c++17 -O2 -Wall -Wextra main.cpp -o elfetch
 
 ## Usage
 
-Pass the path to an ELF file as the first argument:
+Run it with the path to an ELF file:
 
 ```sh
 ./elfetch /bin/ls
 ```
 
-The output includes fields like:
+Example output:
 
-- **Target** — the path you supplied
-- **Endian** — little- or big-endian encoding
-- **Arch** — a recognized machine architecture, when available
-- **Type** — such as relocatable, executable, shared object, or core file
-- **OS/ABI** — a recognized ABI identifier, when available
-- **Format** — the program's current ELF header status label
+```text
+\     /\     /
+ \. .'--`. .' 
+  \\|X X |//
+   \|┌──┐|/
+    |└──┘|
+     ----
+Target:  /bin/ls
+Endian:  little endian
+Arch:    AMD x86-64 architecture
+Type:    EXEC (Ejecutable)
+OS/ABI:  Linux
+Format:  ELF64 Header OK
+```
 
-If the file does not have the ELF magic bytes, `elfetch` prints an error and exits with a non-zero status. Run it without a file argument and it exits with a non-zero status.
+If the file is not a valid ELF binary, the program prints an error and exits with status 1.
 
 ## Notes
 
-This is an early, minimal ELF-header inspector. It reads a fixed-size header and currently interprets its fields using an ELF64 header layout; it is not a complete ELF validator or a general-purpose binary analysis tool. Architecture and OS/ABI names not covered by its lookup tables are reported as reserved or unknown.
+This project is intentionally small and focused: it reads a fixed ELF64 header and interprets the most common metadata fields. It is not a full ELF parser or validator for every possible ELF variant.
 
-## ELF header reference
+The header layout is based on the System V ABI ELF header specification:
 
-The header fields and identification bytes are described in the [System V ABI: ELF Header](https://refspecs.linuxfoundation.org/elf/gabi4+/ch4.eheader.html).
+- https://refspecs.linuxfoundation.org/elf/gabi4+/ch4.eheader.html
 
 ## License
 
