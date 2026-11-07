@@ -2,6 +2,7 @@
 #include <cstdint>
 #include <cstdio>
 #include <cstring>
+#include <functional>
 #include <iostream>
 #include <fcntl.h>
 #include <sys/types.h>
@@ -293,6 +294,8 @@ inline auto checkArch(ARCH EMACHINE) -> string {
   CASE(ARCH::TPC, "Tenor Network TPC processor")
   CASE(ARCH::SNP1K, "Trebia SNP 1000 processor")
   CASE(ARCH::ST200, "STM ST200 microcontroller")
+  default:
+  return "";    
   }
 }
 
